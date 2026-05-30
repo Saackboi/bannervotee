@@ -578,9 +578,9 @@
   }
 
   .coverflow-card {
-    width: min(42vw, 35rem);
+    width: min(30vw, 27rem);
     transform:
-      translateX(calc(-50% + (var(--offset) * 72%)))
+      translateX(calc(-50% + (var(--offset) * 86%)))
       translateZ(calc((1 - var(--abs-offset)) * 3.5rem))
       rotateY(calc(var(--offset) * -15deg))
       scale(clamp(0.78, calc(1 - (var(--abs-offset) * 0.1)), 1));
