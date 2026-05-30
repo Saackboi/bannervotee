@@ -21,7 +21,6 @@
   z-index: 80;
   border: 0;
   background: rgba(2, 12, 24, 0.5);
-  backdrop-filter: blur(10px);
   cursor: zoom-out;
   animation: zoom-backdrop-in 220ms ease-out;
 }
@@ -228,6 +227,15 @@
   perspective: 1200px;
 }
 
+.showcase-shell.is-zooming .carousel-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  margin: 0;
+  perspective: none;
+  pointer-events: none;
+}
+
 .coverflow-card {
   --offset: 0;
   --abs-offset: max(var(--offset), calc(var(--offset) * -1));
@@ -263,11 +271,16 @@
 }
 
 .coverflow-card.is-active.is-zoomed {
+  position: fixed;
+  top: calc(var(--topbar-height) + 0.85rem);
+  left: 50%;
+  width: min(94vw, 27rem);
   z-index: 220;
   cursor: zoom-out;
   opacity: 1;
   filter: none;
-  transform: translateX(-50%) translateY(clamp(-2.2rem, -5svh, -0.6rem)) scale(1.16);
+  pointer-events: auto;
+  transform: translateX(-50%);
 }
 
 .coverflow-card:not(.is-active) {
@@ -342,10 +355,13 @@
 .coverflow-card.is-active.is-zoomed .flyer-image-frame {
   animation: none;
   box-shadow: 0 1.4rem 3.5rem rgba(2, 12, 24, 0.24);
+  transform: none;
+  touch-action: manipulation;
 }
 
 .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
-  height: clamp(20rem, 68svh, 42rem);
+  height: min(62svh, 32rem);
+  transform: none;
   filter: drop-shadow(0 0.8rem 1rem rgba(2, 12, 24, 0.16));
 }
 
@@ -698,11 +714,13 @@
   }
 
   .coverflow-card.is-active.is-zoomed {
-    transform: translateX(-50%) translateY(clamp(-2.8rem, -6svh, -1rem)) scale(1.45);
+    top: calc(var(--topbar-height) + 0.7rem);
+    width: min(54vw, 37rem);
+    transform: translateX(-50%);
   }
 
   .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
-    height: clamp(24rem, 67svh, 45rem);
+    height: min(69svh, 45rem);
   }
 
   .carousel-control.prev {
@@ -746,12 +764,13 @@
   }
 
   .coverflow-card.is-active.is-zoomed {
-    top: 0.5rem;
-    transform: translateX(-50%) scale(1.08);
+    top: calc(var(--topbar-height) + 0.35rem);
+    width: min(94vw, 25rem);
+    transform: translateX(-50%);
   }
 
   .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
-    height: clamp(17rem, 58svh, 30rem);
+    height: min(54svh, 27rem);
   }
 
   .creator-pill {
