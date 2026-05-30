@@ -216,7 +216,7 @@
   position: absolute;
   top: 0.8rem;
   left: 50%;
-  width: min(86vw, 23rem);
+  width: min(92vw, 25rem);
   opacity: clamp(0.28, calc(1 - (var(--abs-offset) * 0.28)), 1);
   pointer-events: none;
   transform:
@@ -271,7 +271,7 @@
 
 .flyer-image-frame img {
   width: 100%;
-  height: clamp(14rem, 43svh, 25rem);
+  height: clamp(16rem, 49svh, 28rem);
   min-height: 0;
   object-fit: contain;
   object-position: center;
@@ -648,12 +648,12 @@
   }
 
   .coverflow-card {
-    top: 1.55rem;
-    width: min(84vw, 22rem);
+    top: 0.75rem;
+    width: min(94vw, 25rem);
   }
 
   .flyer-image-frame img {
-    height: clamp(12.5rem, 37svh, 20rem);
+    height: clamp(15rem, 45svh, 24rem);
   }
 
   .flyer-meta {
