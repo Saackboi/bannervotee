@@ -34,13 +34,13 @@
       </header>
 
       <div class="grid gap-5 xl:grid-cols-[1fr_1.15fr]">
-        <form id="nuevo-diseno" class="admin-card p-5" [formGroup]="bannerForm" (ngSubmit)="createBanner()">
+        <form id="nuevo-diseno" class="admin-card p-5" [formGroup]="bannerForm" (ngSubmit)="saveBanner()">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <h2 class="text-lg font-black text-[#102a43]">Nuevo diseño</h2>
-              <p class="mt-1 text-sm text-[#102a43]/55">Registra una propuesta usando una imagen local del proyecto.</p>
+              <h2 class="text-lg font-black text-[#102a43]">{{ editingBanner() ? 'Editar diseño' : 'Nuevo diseño' }}</h2>
+              <p class="mt-1 text-sm text-[#102a43]/55">{{ editingBanner() ? 'Modifica los campos del diseño existente.' : 'Registra una propuesta usando una imagen local del proyecto.' }}</p>
             </div>
-            <span class="rounded-full bg-[#f4ba00]/14 px-3 py-1 text-xs font-black text-[#8a6500]">Diseño</span>
+            <span class="rounded-full bg-[#f4ba00]/14 px-3 py-1 text-xs font-black text-[#8a6500]">{{ editingBanner() ? 'Editando' : 'Diseño' }}</span>
           </div>
 
           <label class="mt-5 block text-sm font-black text-[#102a43]" for="title">Título</label>
@@ -66,9 +66,18 @@
               }
             </select>
 
-          <button class="admin-button mt-6 w-full bg-[#002b55] px-4 py-3 text-white shadow-lg shadow-[#002b55]/10 disabled:cursor-not-allowed disabled:opacity-60" type="submit" [disabled]="saving()">
-            {{ saving() ? 'Guardando...' : 'Registrar diseño' }}
-          </button>
+          @if (editingBanner()) {
+            <div class="mt-6 flex gap-3">
+              <button class="admin-button flex-1 border border-[#002b55]/10 bg-white px-4 py-3 text-sm text-[#102a43] shadow-sm" type="button" (click)="cancelEdit()">Cancelar</button>
+              <button class="admin-button flex-1 bg-[#002b55] px-4 py-3 text-sm text-white shadow-lg shadow-[#002b55]/10 disabled:cursor-not-allowed disabled:opacity-60" type="submit" [disabled]="saving()">
+                {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+              </button>
+            </div>
+          } @else {
+            <button class="admin-button mt-6 w-full bg-[#002b55] px-4 py-3 text-white shadow-lg shadow-[#002b55]/10 disabled:cursor-not-allowed disabled:opacity-60" type="submit" [disabled]="saving()">
+              {{ saving() ? 'Guardando...' : 'Registrar diseño' }}
+            </button>
+          }
         </form>
 
         @if (settings$ | async; as settings) {
@@ -148,6 +157,7 @@
                   @for (status of statusOptions; track status) {
                     <button class="rounded border border-[#002b55]/10 bg-[#f7fafc] px-2 py-1 text-[0.65rem] font-semibold text-[#102a43]" type="button" (click)="updateStatus(banner, status)">{{ status | statusLabel }}</button>
                   }
+                  <button class="rounded border border-[#002b55]/10 bg-[#f0f4fe] px-2 py-1 text-[0.65rem] font-semibold text-[#00337a]" type="button" (click)="editBanner(banner)">Editar</button>
                   <button class="rounded bg-red-50 px-2 py-1 text-[0.65rem] font-semibold text-red-700" type="button" (click)="deleteBanner(banner)">Eliminar</button>
                 </div>
               </div>

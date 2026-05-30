@@ -172,7 +172,6 @@
   min-height: 34rem;
   margin-top: 0.6rem;
   perspective: 1200px;
-  transform-style: preserve-3d;
 }
 
 .coverflow-card {
@@ -189,7 +188,6 @@
     translateZ(calc((1 - var(--abs-offset)) * 3.25rem))
     rotateY(calc(var(--offset) * -16deg))
     scale(clamp(0.78, calc(1 - (var(--abs-offset) * 0.11)), 1));
-  transform-style: preserve-3d;
   transition:
     transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 420ms ease,
@@ -215,13 +213,13 @@
   background: transparent;
   border: 0;
   box-shadow: none;
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
 .coverflow-card.is-active .flyer-card {
   filter: none;
 }
-
-
 
 .flyer-image-frame {
   position: relative;
@@ -232,15 +230,7 @@
   box-shadow: none;
   transform: translateZ(1.85rem);
   transform-style: preserve-3d;
-  backface-visibility: hidden;
   touch-action: none;
-  will-change: transform;
-}
-
-
-
-.coverflow-card.is-active .flyer-image-frame {
-  animation: active-card-float 4.4s ease-in-out infinite;
 }
 
 .flyer-image-frame img {
@@ -249,15 +239,60 @@
   min-height: 20rem;
   object-fit: contain;
   object-position: center;
-  transform: translateZ(0.01px);
+  border-radius: 1.15rem;
+  transform: translateZ(28px);
+  transform-style: preserve-3d;
   backface-visibility: hidden;
   transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
   filter: drop-shadow(0 0.45rem 0.65rem rgba(0, 43, 85, 0.1));
 }
 
+.coverflow-card.is-active .flyer-image-frame {
+  animation: active-card-float 4.4s ease-in-out infinite;
+}
+
+.coverflow-card.is-active .flyer-image-frame.is-tilting {
+  animation-play-state: paused;
+}
+
+
+
 .coverflow-card.is-active:focus-within .flyer-image-frame img,
 .coverflow-card.is-active:hover .flyer-image-frame img {
-  transform: translateZ(0.01px);
+  transform: translateZ(28px);
+}
+
+.shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 1.15rem;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.12) 55%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.coverflow-card.is-active .shimmer-overlay {
+  animation: shimmer-sweep 8s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+@keyframes shimmer-sweep {
+  0%, 60%, 100% { opacity: 0; }
+  62% { opacity: 1; }
+  72% { opacity: 1; }
+  74% { opacity: 0; }
+  76% { opacity: 1; }
+  86% { opacity: 1; }
+  88% { opacity: 0; }
 }
 
 .flyer-meta {
@@ -267,6 +302,7 @@
   transform: none;
   filter: none;
   backface-visibility: visible;
+  transform-style: preserve-3d;
 }
 
 .flyer-title {
@@ -280,6 +316,7 @@
   text-wrap: pretty;
   overflow-wrap: anywhere;
   word-break: break-word;
+  transform: translateZ(42px);
 }
 
 .flyer-meta,
@@ -316,6 +353,10 @@
   box-shadow: 0 0.55rem 1.35rem rgba(0, 43, 85, 0.12);
 }
 
+.creator-badge {
+  transform: translateZ(50px);
+}
+
 .creator-avatar {
   display: grid;
   place-items: center;
@@ -331,6 +372,7 @@
 }
 
 .vote-button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -340,29 +382,58 @@
   background: linear-gradient(180deg, #1b3f63 0%, #102f4f 100%);
   color: #ffffff;
   font-weight: 850;
-  padding: 0.86rem 1rem;
+  padding: 0.65rem 0.55rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 0.8rem 1.45rem rgba(16, 47, 79, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: transform 240ms ease, box-shadow 240ms ease, background 240ms ease;
+  font-size: 0.82rem;
+  transform: translateZ(35px);
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms ease,
+    background 240ms ease;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vote-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.vote-button:hover::after,
+.vote-button:focus-visible::after {
+  opacity: 1;
+}
+
+.vote-button:active::after {
+  opacity: 0;
 }
 
 .vote-button:hover,
 .vote-button:focus-visible {
   background: linear-gradient(180deg, #244d75 0%, #12395f 100%);
   box-shadow: 0 1rem 1.75rem rgba(16, 47, 79, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-  transform: translateY(-2px);
+  transform: translateZ(35px) translateY(-2px);
 }
 
 .vote-button:active {
-  transform: translateY(1px) scale(0.985);
+  transform: translateZ(35px) translateY(1px) scale(0.98);
+  transition-duration: 80ms;
 }
 
 .showcase-card .js-tilt-glare {
   border-radius: 1.15rem;
-  overflow: hidden;
 }
 
 .showcase-card .js-tilt-glare-inner {
+  border-radius: 1.15rem;
   background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.55));
 }
 
@@ -395,19 +466,14 @@
 
 .vote-actions-row {
   display: grid;
-  gap: 0.6rem;
-}
-
-@media (min-width: 640px) {
-  .vote-actions-row {
-    grid-template-columns: 1fr 1fr;
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
 }
 
 .carousel-control {
   position: absolute;
   top: 42%;
-  z-index: 20;
+  z-index: 110;
   display: grid;
   place-items: center;
   width: 2.65rem;
@@ -441,7 +507,7 @@
   }
 
   50% {
-    translate: 0 -0.42rem;
+    translate: 0 -6px;
   }
 }
 
@@ -514,7 +580,6 @@
   .carousel-control.next {
     right: clamp(0.75rem, 2.5vw, 2.5rem);
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -526,5 +591,13 @@
   .vote-success-panel {
     animation: none;
     transition-duration: 1ms;
+  }
+
+  .shimmer-overlay {
+    display: none;
+  }
+
+  .vote-button::after {
+    display: none;
   }
 }

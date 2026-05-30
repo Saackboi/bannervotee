@@ -47,13 +47,14 @@
                   [style.z-index]="100 - (offsetFor(index) < 0 ? -offsetFor(index) : offsetFor(index))"
                   (click)="setActiveIndex(index)"
                 >
-                  <div class="flyer-card">
+                    <div class="flyer-card">
                     <div
                       class="flyer-image-frame showcase-card"
                       [appVanillaTiltActive]="index === activeIndex()"
                       (touchstart)="$event.stopPropagation()"
                       (touchend)="$event.stopPropagation()"
                     >
+                      <div class="shimmer-overlay"></div>
                       <img class="flyer-image" [src]="banner.imageUrl" [alt]="banner.title" />
                     </div>
 
@@ -64,7 +65,7 @@
 
                       <div class="flex justify-center">
                         <div class="creator-pill">
-                          <span class="creator-avatar">{{ initialsFor(banner.creatorName) }}</span>
+                          <span class="creator-badge creator-avatar">{{ initialsFor(banner.creatorName) }}</span>
                           <span class="truncate text-xs font-black text-[#002b55]/75">{{ banner.creatorName }}</span>
                         </div>
                       </div>
@@ -101,8 +102,6 @@
                 </article>
               }
             </section>
-
-
 
           } @else {
             <p class="mx-5 mt-10 rounded-[1.6rem] border border-[#002b55]/10 bg-white/80 p-8 text-center text-[#002b55]/70 shadow-xl shadow-[#002b55]/10">

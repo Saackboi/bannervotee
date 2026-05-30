@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, HostBinding, Input, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
 import VanillaTilt, { HTMLVanillaTiltElement, TiltOptions } from 'vanilla-tilt';
 
 @Directive({
@@ -9,6 +9,7 @@ export class VanillaTiltDirective implements AfterViewInit, OnChanges, OnDestroy
   private viewReady = false;
 
   @Input() appVanillaTiltActive = false;
+  @HostBinding('class.is-tilting') protected isTilting = false;
 
   ngAfterViewInit(): void {
     this.viewReady = true;
@@ -26,11 +27,16 @@ export class VanillaTiltDirective implements AfterViewInit, OnChanges, OnDestroy
   }
 
   onPointerEnter(event: PointerEvent): void {
+    this.isTilting = true;
     this.forwardPointerAsMouse('mouseenter', event);
   }
 
   onPointerMove(event: PointerEvent): void {
     this.forwardPointerAsMouse('mousemove', event);
+  }
+
+  onPointerLeave(): void {
+    this.isTilting = false;
   }
 
   private syncTilt(): void {
@@ -54,20 +60,27 @@ export class VanillaTiltDirective implements AfterViewInit, OnChanges, OnDestroy
     element.addEventListener('pointermove', this.onPointerMoveBound);
     element.addEventListener('pointerup', this.onPointerReleaseBound);
     element.addEventListener('pointercancel', this.onPointerReleaseBound);
+    element.addEventListener('pointerleave', this.onPointerLeaveBound);
   }
 
   private destroyTilt(): void {
     const element = this.elementRef.nativeElement;
+    this.isTilting = false;
     element.removeEventListener('pointerenter', this.onPointerEnterBound);
     element.removeEventListener('pointermove', this.onPointerMoveBound);
     element.removeEventListener('pointerup', this.onPointerReleaseBound);
     element.removeEventListener('pointercancel', this.onPointerReleaseBound);
+    element.removeEventListener('pointerleave', this.onPointerLeaveBound);
     element.vanillaTilt?.destroy();
   }
 
   private readonly onPointerEnterBound = (event: PointerEvent) => this.onPointerEnter(event);
   private readonly onPointerMoveBound = (event: PointerEvent) => this.onPointerMove(event);
-  private readonly onPointerReleaseBound = () => this.resetInstantly();
+  private readonly onPointerLeaveBound = () => this.onPointerLeave();
+  private readonly onPointerReleaseBound = () => {
+    this.isTilting = false;
+    this.resetInstantly();
+  };
 
   private forwardPointerAsMouse(type: 'mouseenter' | 'mousemove', event: PointerEvent): void {
     if (event.pointerType === 'mouse') {
@@ -101,12 +114,12 @@ export class VanillaTiltDirective implements AfterViewInit, OnChanges, OnDestroy
     return {
       max: 12,
       speed: 500,
-      glare: false,
-      scale: 1.01,
-      perspective: 1000,
+      scale: 1.025,
+      perspective: 1100,
+      glare: true,
+      'max-glare': 0.18,
       gyroscope: true,
-      transition: true,
-      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      easing: 'cubic-bezier(.03,.98,.52,.99)',
     };
   }
 }

@@ -26,6 +26,16 @@ export class BannerService {
     });
   }
 
+  async updateBanner(id: string, input: BannerInput): Promise<void> {
+    await updateDoc(doc(this.firestore, `${FIRESTORE_COLLECTIONS.banners}/${id}`), {
+      title: input.title,
+      creatorName: input.creatorName,
+      imageUrl: input.imageUrl,
+      status: input.status,
+      updatedAt: serverTimestamp(),
+    });
+  }
+
   updateStatus(id: string, status: BannerStatus): Promise<void> {
     return updateDoc(doc(this.firestore, `${FIRESTORE_COLLECTIONS.banners}/${id}`), {
       status,

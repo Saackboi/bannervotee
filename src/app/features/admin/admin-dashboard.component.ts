@@ -28,6 +28,7 @@ export class AdminDashboardComponent {
   protected readonly ranking$ = this.rankingService.ranking$;
   protected readonly settings$ = this.settingsService.settings$;
   protected readonly saving = signal(false);
+  protected readonly editingBanner = signal<Banner | null>(null);
   protected readonly statusOptions: BannerStatus[] = BANNER_STATUS_OPTIONS;
 
   protected readonly bannerForm = this.formBuilder.nonNullable.group({
@@ -37,7 +38,7 @@ export class AdminDashboardComponent {
     status: ['pending' as BannerStatus, [Validators.required]],
   });
 
-  async createBanner(): Promise<void> {
+  async saveBanner(): Promise<void> {
     if (this.bannerForm.invalid || this.saving()) {
       this.bannerForm.markAllAsTouched();
       return;
@@ -47,15 +48,37 @@ export class AdminDashboardComponent {
 
     try {
       const formData = this.bannerForm.getRawValue();
-      await this.bannerService.createBanner({
+      const input = {
         ...formData,
         imageUrl: this.normalizeBannerImagePath(formData.imageUrl),
-      });
+      };
 
-      this.bannerForm.reset({ title: '', creatorName: '', imageUrl: '/banners/', status: 'pending' });
+      const current = this.editingBanner();
+
+      if (current) {
+        await this.bannerService.updateBanner(current.id, input);
+      } else {
+        await this.bannerService.createBanner(input);
+      }
+
+      this.resetForm();
     } finally {
       this.saving.set(false);
     }
+  }
+
+  editBanner(banner: Banner): void {
+    this.editingBanner.set(banner);
+    this.bannerForm.setValue({
+      title: banner.title,
+      creatorName: banner.creatorName,
+      imageUrl: banner.imageUrl,
+      status: banner.status,
+    });
+  }
+
+  cancelEdit(): void {
+    this.resetForm();
   }
 
   updateStatus(banner: Banner, status: BannerStatus): Promise<void> {
@@ -76,6 +99,11 @@ export class AdminDashboardComponent {
 
   logout(): Promise<void> {
     return this.adminService.logout();
+  }
+
+  private resetForm(): void {
+    this.editingBanner.set(null);
+    this.bannerForm.reset({ title: '', creatorName: '', imageUrl: '/banners/', status: 'pending' });
   }
 
   private normalizeBannerImagePath(value: string): string {
