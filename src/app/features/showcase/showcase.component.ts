@@ -44,7 +44,11 @@ export class ShowcaseComponent {
   private readonly focusParam = this.route.snapshot.queryParamMap.get('focus');
 
   constructor() {
-    this.sessionReady = this.startVisitorSession();
+    this.sessionReady = this.startVisitorSession().catch(() => {
+      this.currentUserId = '';
+      this.hasVoted.set(false);
+      this.message.set('No se pudo validar tu sesión. Recarga la página si deseas votar.');
+    });
 
     this.banners$.subscribe((list) => {
       this.banners.set(list);
