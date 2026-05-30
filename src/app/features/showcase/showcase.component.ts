@@ -56,11 +56,9 @@ export class ShowcaseComponent {
       const idx = this.activeIndex();
       const banner = list[idx];
       if (banner?.id && this.focusResolved()) {
-        this.router.navigate([], {
-          queryParams: { focus: banner.id },
-          replaceUrl: true,
-          queryParamsHandling: 'merge',
-        });
+        const url = new URL(window.location.href);
+        url.searchParams.set('focus', banner.id);
+        history.replaceState(null, '', url.toString());
       }
     });
   }
