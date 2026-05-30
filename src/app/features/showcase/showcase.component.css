@@ -365,6 +365,18 @@
   filter: drop-shadow(0 0.8rem 1rem rgba(2, 12, 24, 0.16));
 }
 
+.coverflow-card.is-active.is-zoomed .flyer-meta {
+  padding-top: 1rem;
+}
+
+.coverflow-card.is-active.is-zoomed .flyer-title {
+  margin-bottom: 0.75rem;
+}
+
+.coverflow-card.is-active.is-zoomed .creator-pill {
+  margin-top: 0;
+}
+
 .coverflow-card.is-active .flyer-image-frame.is-tilting {
   animation-play-state: paused;
 }
@@ -771,6 +783,14 @@
 
   .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
     height: min(54svh, 27rem);
+  }
+
+  .coverflow-card.is-active.is-zoomed .flyer-meta {
+    padding-top: 0.85rem;
+  }
+
+  .coverflow-card.is-active.is-zoomed .flyer-title {
+    margin-bottom: 0.65rem;
   }
 
   .creator-pill {
