@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isVoteCounterIncrement() {
+      return request.resource.data.diff(resource.data).changedKeys().hasOnly(['votes'])
+        && request.resource.data.votes is int
+        && request.resource.data.votes == ((resource.data.votes is int) ? resource.data.votes + 1 : 1);
+    }
+
+    match /admins/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    match /settings/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /banners/{bannerId} {
+      allow read: if resource.data.status == 'active' || isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (signedIn() && resource.data.status == 'active' && isVoteCounterIncrement());
+    }
+
+    match /votes/{userId} {
+      allow get: if signedIn() && request.auth.uid == userId;
+      allow list: if false;
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.userId == userId
+        && request.resource.data.bannerId is string
+        && !exists(/databases/$(database)/documents/votes/$(userId));
+      allow update, delete: if false;
+    }
+  }
+}
