@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FirebaseError } from 'firebase/app';
 import { AuthService } from '../../core/services/auth.service';
@@ -18,13 +18,16 @@ export class AdminLoginComponent {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
   protected readonly form = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(254), this.noControlCharacters]],
+    password: ['', [Validators.required, Validators.maxLength(128), this.noControlCharacters]],
   });
 
   async submit(): Promise<void> {
+    this.normalizeEmail();
+
     if (this.form.invalid || this.loading()) {
       this.form.markAllAsTouched();
+      this.error.set('Revisa el correo y la contraseña antes de continuar.');
       return;
     }
 
@@ -47,6 +50,41 @@ export class AdminLoginComponent {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  protected fieldError(field: 'email' | 'password'): string {
+    const control = this.form.controls[field];
+
+    if (!control.touched || !control.errors) {
+      return '';
+    }
+
+    if (control.errors['required']) {
+      return field === 'email' ? 'Ingresa el correo.' : 'Ingresa la contraseña.';
+    }
+
+    if (control.errors['email']) {
+      return 'Ingresa un correo válido.';
+    }
+
+    if (control.errors['maxlength']) {
+      return field === 'email' ? 'El correo es demasiado largo.' : 'La contraseña es demasiado larga.';
+    }
+
+    if (control.errors['controlCharacters']) {
+      return 'No uses caracteres de control o saltos de línea.';
+    }
+
+    return 'Valor inválido.';
+  }
+
+  private normalizeEmail(): void {
+    const email = this.form.controls.email.value.trim().toLowerCase();
+    this.form.controls.email.setValue(email, { emitEvent: false });
+  }
+
+  private noControlCharacters(control: AbstractControl<string>): ValidationErrors | null {
+    return /[\u0000-\u001F\u007F]/.test(control.value) ? { controlCharacters: true } : null;
   }
 
   private getLoginErrorMessage(error: unknown): string {
