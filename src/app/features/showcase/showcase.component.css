@@ -188,7 +188,7 @@
   position: absolute;
   top: 0.8rem;
   left: 50%;
-  width: min(78vw, 20.5rem);
+  width: min(86vw, 23rem);
   opacity: clamp(0.28, calc(1 - (var(--abs-offset) * 0.28)), 1);
   pointer-events: none;
   transform:
@@ -243,7 +243,7 @@
 
 .flyer-image-frame img {
   width: 100%;
-  height: clamp(10rem, 31svh, 20rem);
+  height: clamp(14rem, 43svh, 25rem);
   min-height: 0;
   object-fit: contain;
   object-position: center;
