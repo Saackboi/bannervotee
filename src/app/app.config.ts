@@ -1,11 +1,17 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withViewTransitions } from '@angular/router';
+import { provideLottieOptions } from 'ngx-lottie';
 
+import { firebaseProviders } from './core/firebase/firebase.providers';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes, withViewTransitions()),
+    provideLottieOptions({
+      player: () => import('lottie-web'),
+    }),
+    ...firebaseProviders,
   ]
 };
