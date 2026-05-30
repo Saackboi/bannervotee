@@ -152,6 +152,10 @@ export class ShowcaseComponent {
     return index - this.activeIndex();
   }
 
+  shouldLoadImage(index: number): boolean {
+    return Math.abs(this.offsetFor(index)) <= 1;
+  }
+
   initialsFor(name: string): string {
     return getCreatorInitials(name);
   }

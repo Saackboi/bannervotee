@@ -55,7 +55,16 @@
                       (touchend)="$event.stopPropagation()"
                     >
                       <div class="shimmer-overlay"></div>
-                      <img class="flyer-image" [src]="banner.imageUrl" [alt]="banner.title" />
+                      @if (shouldLoadImage(index)) {
+                        <img
+                          class="flyer-image"
+                          [src]="banner.imageUrl"
+                          [alt]="banner.title"
+                          [attr.loading]="index === activeIndex() ? 'eager' : 'lazy'"
+                          [attr.fetchpriority]="index === activeIndex() ? 'high' : 'low'"
+                          decoding="async"
+                        />
+                      }
                     </div>
 
                     <div class="flyer-meta text-center">
