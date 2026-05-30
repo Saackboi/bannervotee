@@ -1,7 +1,7 @@
 :host {
   --topbar-height: 3.55rem;
   display: block;
-  min-height: 100dvh;
+  min-height: 100svh;
   color: #002b55;
   background:
     radial-gradient(circle at 14% 8%, rgba(0, 73, 144, 0.1), transparent 30%),
@@ -11,7 +11,14 @@
 
 .showcase-shell {
   position: relative;
-  min-height: 100dvh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.showcase-content {
+  height: calc(100svh - var(--topbar-height));
+  min-height: 0;
+  padding-bottom: max(0.75rem, calc(env(safe-area-inset-bottom) + 0.55rem));
   overflow: hidden;
 }
 
@@ -61,13 +68,13 @@
 
 @media (min-width: 900px) {
   :host {
-    --topbar-height: clamp(5.1rem, 10dvh, 6.4rem);
-    height: 100dvh;
+    --topbar-height: clamp(4.2rem, 8svh, 5.2rem);
+    height: 100svh;
     overflow: hidden;
   }
 
   .showcase-shell {
-    height: 100dvh;
+    height: 100svh;
     overflow: hidden;
   }
 
@@ -77,7 +84,7 @@
   }
 
   .showcase-content {
-    height: calc(100dvh - var(--topbar-height));
+    height: calc(100svh - var(--topbar-height));
     min-height: 0;
     padding-bottom: 0;
     overflow: hidden;
@@ -92,12 +99,12 @@
 
   .hero-copy {
     flex: 0 0 auto;
-    padding-top: clamp(0.35rem, 1.2dvh, 0.9rem);
+    padding-top: clamp(0.25rem, 0.8svh, 0.6rem);
   }
 
   .anniversary-logo {
     max-width: min(27rem, 35vw);
-    max-height: clamp(3.7rem, 8dvh, 5.4rem);
+    max-height: clamp(3rem, 6.4svh, 4.4rem);
   }
 
   .hero-subtitle {
@@ -116,7 +123,7 @@
   }
 
   .flyer-image-frame img {
-    height: clamp(15rem, 39dvh, 24rem);
+    height: clamp(13rem, 34svh, 22rem);
     min-height: 0;
   }
 
@@ -129,12 +136,12 @@
   }
 
   .vote-button {
-    margin-top: clamp(0.45rem, 1dvh, 0.75rem) !important;
-    padding-block: clamp(0.65rem, 1.4dvh, 0.86rem);
+    margin-top: clamp(0.35rem, 0.7svh, 0.6rem) !important;
+    padding-block: clamp(0.55rem, 1svh, 0.75rem);
   }
 
   .flyer-title {
-    font-size: clamp(1rem, 2.4dvh, 1.35rem);
+    font-size: clamp(0.95rem, 2svh, 1.25rem);
   }
 }
 
@@ -168,9 +175,10 @@
 .carousel-stage {
   position: relative;
   z-index: 2;
-  height: min(74dvh, 43rem);
-  min-height: 34rem;
-  margin-top: 0.6rem;
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  margin-top: 0.35rem;
   perspective: 1200px;
 }
 
@@ -235,8 +243,8 @@
 
 .flyer-image-frame img {
   width: 100%;
-  height: min(50dvh, 27.5rem);
-  min-height: 20rem;
+  height: clamp(12rem, 38svh, 23rem);
+  min-height: 0;
   object-fit: contain;
   object-position: center;
   border-radius: 1.15rem;
