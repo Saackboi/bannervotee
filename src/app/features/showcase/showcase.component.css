@@ -614,12 +614,12 @@
   }
 
   .coverflow-card {
-    top: 0.1rem;
-    width: min(82vw, 21.5rem);
+    top: 1.55rem;
+    width: min(84vw, 22rem);
   }
 
   .flyer-image-frame img {
-    height: clamp(12rem, 35svh, 19rem);
+    height: clamp(12.5rem, 37svh, 20rem);
   }
 
   .flyer-meta {
