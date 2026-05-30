@@ -29,6 +29,9 @@ export class AdminDashboardComponent {
   protected readonly settings$ = this.settingsService.settings$;
   protected readonly saving = signal(false);
   protected readonly editingBanner = signal<Banner | null>(null);
+  protected readonly createdBannerId = signal<string | null>(null);
+  protected readonly copiedId = signal<string | null>(null);
+  protected readonly origin = window.location.origin;
   protected readonly statusOptions: BannerStatus[] = BANNER_STATUS_OPTIONS;
 
   protected readonly bannerForm = this.formBuilder.nonNullable.group({
@@ -58,7 +61,8 @@ export class AdminDashboardComponent {
       if (current) {
         await this.bannerService.updateBanner(current.id, input);
       } else {
-        await this.bannerService.createBanner(input);
+        const id = await this.bannerService.createBanner(input);
+        this.createdBannerId.set(id);
       }
 
       this.resetForm();
@@ -87,6 +91,21 @@ export class AdminDashboardComponent {
 
   deleteBanner(banner: Banner): Promise<void> {
     return this.bannerService.deleteBanner(banner);
+  }
+
+  async copyQrUrl(bannerId: string): Promise<void> {
+    const url = `${window.location.origin}?focus=${bannerId}`;
+    await navigator.clipboard.writeText(url);
+    this.copiedId.set(bannerId);
+    setTimeout(() => {
+      if (this.copiedId() === bannerId) {
+        this.copiedId.set(null);
+      }
+    }, 2500);
+  }
+
+  dismissQr(): void {
+    this.createdBannerId.set(null);
   }
 
   toggleSetting(key: 'showcaseOpen' | 'votingOpen' | 'showRankingAfterVote', value: boolean): Promise<void> {

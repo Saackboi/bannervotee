@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { Banner } from '../../core/models/banner.model';
 import { AnimationService } from '../../core/services/animation.service';
@@ -25,6 +24,7 @@ export class ShowcaseComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private currentUserId = '';
+  private readonly banners = signal<Banner[]>([]);
 
   protected readonly settings$ = inject(SettingsService).settings$;
   protected readonly banners$ = inject(BannerService).activeBanners$;
@@ -40,10 +40,39 @@ export class ShowcaseComponent {
   };
   private touchStartX = 0;
   private readonly sessionReady: Promise<void>;
+  private readonly focusResolved = signal(false);
+  private readonly focusParam = this.route.snapshot.queryParamMap.get('focus');
 
   constructor() {
     this.sessionReady = this.startVisitorSession();
-    this.initFocus();
+
+    this.banners$.subscribe((list) => {
+      this.banners.set(list);
+      this.sessionReady.then(() => this.resolveInitialFocus(list));
+    });
+
+    effect(() => {
+      const list = this.banners();
+      const idx = this.activeIndex();
+      const banner = list[idx];
+      if (banner?.id && this.focusResolved()) {
+        this.router.navigate([], {
+          queryParams: { focus: banner.id },
+          replaceUrl: true,
+          queryParamsHandling: 'merge',
+        });
+      }
+    });
+  }
+
+  private resolveInitialFocus(list: Banner[]): void {
+    if (this.focusParam) {
+      const idx = list.findIndex((b) => b.id === this.focusParam);
+      if (idx >= 0) {
+        this.activeIndex.set(idx);
+      }
+    }
+    this.focusResolved.set(true);
   }
 
   async voteFor(banner: Banner): Promise<void> {
@@ -138,27 +167,6 @@ export class ShowcaseComponent {
       this.hasVoted.set(await this.voteService.hasVoted(user.uid));
     } catch {
       this.hasVoted.set(false);
-    }
-  }
-
-  private async initFocus(): Promise<void> {
-    await this.sessionReady;
-    const focus = this.route.snapshot.queryParamMap.get('focus');
-
-    if (!focus) {
-      return;
-    }
-
-    const banners = await firstValueFrom(this.banners$);
-
-    if (!banners?.length) {
-      return;
-    }
-
-    const idx = banners.findIndex((b) => b.id === focus);
-
-    if (idx >= 0) {
-      this.activeIndex.set(idx);
     }
   }
 }

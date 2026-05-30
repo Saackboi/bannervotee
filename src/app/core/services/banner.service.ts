@@ -14,8 +14,8 @@ export class BannerService {
 
   readonly activeBanners$: Observable<Banner[]> = this.listenToBanners(query(this.bannersRef, where('status', '==', 'active')));
 
-  async createBanner(input: BannerInput): Promise<void> {
-    await addDoc(this.bannersRef, {
+  async createBanner(input: BannerInput): Promise<string> {
+    const docRef = await addDoc(this.bannersRef, {
       title: input.title,
       creatorName: input.creatorName,
       imageUrl: input.imageUrl,
@@ -24,6 +24,7 @@ export class BannerService {
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
+    return docRef.id;
   }
 
   async updateBanner(id: string, input: BannerInput): Promise<void> {
