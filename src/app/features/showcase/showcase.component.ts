@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { Banner } from '../../core/models/banner.model';
 import { AnimationService } from '../../core/services/animation.service';
@@ -22,6 +23,7 @@ export class ShowcaseComponent {
   private readonly voteService = inject(VoteService);
   private readonly animationService = inject(AnimationService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private currentUserId = '';
 
   protected readonly settings$ = inject(SettingsService).settings$;
@@ -41,6 +43,7 @@ export class ShowcaseComponent {
 
   constructor() {
     this.sessionReady = this.startVisitorSession();
+    this.initFocus();
   }
 
   async voteFor(banner: Banner): Promise<void> {
@@ -135,6 +138,27 @@ export class ShowcaseComponent {
       this.hasVoted.set(await this.voteService.hasVoted(user.uid));
     } catch {
       this.hasVoted.set(false);
+    }
+  }
+
+  private async initFocus(): Promise<void> {
+    await this.sessionReady;
+    const focus = this.route.snapshot.queryParamMap.get('focus');
+
+    if (!focus) {
+      return;
+    }
+
+    const banners = await firstValueFrom(this.banners$);
+
+    if (!banners?.length) {
+      return;
+    }
+
+    const idx = banners.findIndex((b) => b.id === focus);
+
+    if (idx >= 0) {
+      this.activeIndex.set(idx);
     }
   }
 }
