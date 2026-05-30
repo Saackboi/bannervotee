@@ -1,0 +1,140 @@
+import { AsyncPipe } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+import { Banner } from '../../core/models/banner.model';
+import { AnimationService } from '../../core/services/animation.service';
+import { AuthService } from '../../core/services/auth.service';
+import { BannerService } from '../../core/services/banner.service';
+import { SettingsService } from '../../core/services/settings.service';
+import { VoteService } from '../../core/services/vote.service';
+import { getCreatorInitials } from '../../shared/utils/creator.utils';
+import { VanillaTiltDirective } from '../../shared/vanilla-tilt.directive';
+
+@Component({
+  selector: 'app-showcase',
+  imports: [AsyncPipe, LottieComponent, VanillaTiltDirective],
+  templateUrl: './showcase.component.html',
+  styleUrl: './showcase.component.css',
+})
+export class ShowcaseComponent {
+  private readonly authService = inject(AuthService);
+  private readonly voteService = inject(VoteService);
+  private readonly animationService = inject(AnimationService);
+  private readonly router = inject(Router);
+  private currentUserId = '';
+
+  protected readonly settings$ = inject(SettingsService).settings$;
+  protected readonly banners$ = inject(BannerService).activeBanners$;
+  protected readonly hasVoted = signal(false);
+  protected readonly voteSubmittedThisSession = signal(false);
+  protected readonly loadingVote = signal(false);
+  protected readonly message = signal('');
+  protected readonly activeIndex = signal(0);
+  protected readonly voteSuccessOptions: AnimationOptions = {
+    path: '/assets/lottie/vote-success.json',
+    loop: false,
+    autoplay: true,
+  };
+  private touchStartX = 0;
+  private readonly sessionReady: Promise<void>;
+
+  constructor() {
+    this.sessionReady = this.startVisitorSession();
+  }
+
+  async voteFor(banner: Banner): Promise<void> {
+    if (this.loadingVote() || this.hasVoted()) {
+      return;
+    }
+
+    this.loadingVote.set(true);
+    this.message.set('');
+
+    try {
+      await this.sessionReady;
+
+      if (!this.currentUserId) {
+        throw new Error('No se pudo validar tu sesión. Recarga la página e intenta de nuevo.');
+      }
+
+      await this.voteService.vote(banner.id, this.currentUserId);
+      this.hasVoted.set(true);
+      this.voteSubmittedThisSession.set(true);
+      this.message.set('Tu elección ha sido registrada.');
+      this.animationService.launchVoteConfetti();
+      await this.router.navigateByUrl('/ranking');
+    } catch (error) {
+      this.message.set(error instanceof Error ? error.message : 'No se pudo registrar el voto.');
+    } finally {
+      this.loadingVote.set(false);
+    }
+  }
+
+  async goToRanking(): Promise<void> {
+    if (!this.hasVoted()) {
+      return;
+    }
+
+    await this.router.navigateByUrl('/ranking');
+  }
+
+  setActiveIndex(index: number): void {
+    this.activeIndex.set(index);
+  }
+
+  previous(total: number): void {
+    if (!total) {
+      return;
+    }
+
+    this.activeIndex.update((index) => (index - 1 + total) % total);
+  }
+
+  next(total: number): void {
+    if (!total) {
+      return;
+    }
+
+    this.activeIndex.update((index) => (index + 1) % total);
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.touches[0]?.clientX ?? 0;
+  }
+
+  onTouchEnd(event: TouchEvent, total: number): void {
+    const touchEndX = event.changedTouches[0]?.clientX ?? this.touchStartX;
+    const delta = touchEndX - this.touchStartX;
+
+    if (Math.abs(delta) < 35) {
+      return;
+    }
+
+    if (delta > 0) {
+      this.previous(total);
+    } else {
+      this.next(total);
+    }
+  }
+
+  offsetFor(index: number): number {
+    return index - this.activeIndex();
+  }
+
+  initialsFor(name: string): string {
+    return getCreatorInitials(name);
+  }
+
+  private async startVisitorSession(): Promise<void> {
+    const user = await this.authService.ensureAnonymousSession();
+    await user.getIdToken();
+    this.currentUserId = user.uid;
+
+    try {
+      this.hasVoted.set(await this.voteService.hasVoted(user.uid));
+    } catch {
+      this.hasVoted.set(false);
+    }
+  }
+}

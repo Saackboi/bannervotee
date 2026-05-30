@@ -1,0 +1,27 @@
+<main class="flex min-h-dvh items-start justify-center px-6 py-8 sm:items-center sm:px-8">
+  <form class="login-card w-full max-w-sm p-8" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="flex items-center gap-3 border-b border-[#002b55]/8 pb-5">
+      <span class="grid h-10 w-10 place-items-center rounded-full bg-[#002b55] text-sm font-black text-white">UTP</span>
+      <div>
+        <p class="text-xs font-black uppercase tracking-[0.26em] text-[#c99500]">Administración</p>
+        <h1 class="mt-1 text-2xl font-black tracking-tight text-[#102a43]">Ingresar</h1>
+      </div>
+    </div>
+
+    <p class="mt-5 text-sm leading-6 text-[#102a43]/60">Acceso exclusivo para gestionar los diseños, el evento y la votación.</p>
+
+    <label class="mt-6 block text-sm font-black text-[#102a43]" for="email">Correo</label>
+    <input id="email" class="login-field mt-2" type="email" formControlName="email" />
+
+    <label class="mt-4 block text-sm font-black text-[#102a43]" for="password">Contraseña</label>
+    <input id="password" class="login-field mt-2" type="password" formControlName="password" />
+
+    @if (error()) {
+      <p class="mt-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">{{ error() }}</p>
+    }
+
+    <button class="login-button mt-6 w-full px-4 py-3 disabled:cursor-not-allowed disabled:opacity-60" type="submit" [disabled]="loading()">
+      {{ loading() ? 'Ingresando...' : 'Entrar' }}
+    </button>
+  </form>
+</main>
