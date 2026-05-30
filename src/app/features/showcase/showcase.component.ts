@@ -34,12 +34,14 @@ export class ShowcaseComponent {
   protected readonly message = signal('');
   protected readonly activeIndex = signal(0);
   protected readonly desktopViewport = signal(typeof window !== 'undefined' && window.innerWidth >= 1024);
+  protected readonly zoomed = signal(false);
   protected readonly voteSuccessOptions: AnimationOptions = {
     path: '/assets/lottie/vote-success.json',
     loop: false,
     autoplay: true,
   };
   private touchStartX = 0;
+  private lastCardTap = { index: -1, time: 0 };
   private readonly sessionReady: Promise<void>;
   private readonly focusResolved = signal(false);
   private readonly focusParam = this.route.snapshot.queryParamMap.get('focus');
@@ -115,7 +117,32 @@ export class ShowcaseComponent {
   }
 
   setActiveIndex(index: number): void {
+    this.zoomed.set(false);
     this.activeIndex.set(index);
+  }
+
+  onCardClick(index: number): void {
+    if (index !== this.activeIndex()) {
+      this.lastCardTap = { index: -1, time: 0 };
+      this.setActiveIndex(index);
+      return;
+    }
+
+    const now = Date.now();
+    const isDoubleTap = this.lastCardTap.index === index && now - this.lastCardTap.time < 340;
+    this.lastCardTap = { index, time: now };
+
+    if (isDoubleTap) {
+      this.toggleZoom();
+    }
+  }
+
+  toggleZoom(): void {
+    this.zoomed.update((zoomed) => !zoomed);
+  }
+
+  exitZoom(): void {
+    this.zoomed.set(false);
   }
 
   previous(total: number): void {
@@ -123,6 +150,7 @@ export class ShowcaseComponent {
       return;
     }
 
+    this.exitZoom();
     this.activeIndex.update((index) => (index - 1 + total) % total);
   }
 
@@ -131,14 +159,23 @@ export class ShowcaseComponent {
       return;
     }
 
+    this.exitZoom();
     this.activeIndex.update((index) => (index + 1) % total);
   }
 
   onTouchStart(event: TouchEvent): void {
+    if (this.zoomed()) {
+      return;
+    }
+
     this.touchStartX = event.touches[0]?.clientX ?? 0;
   }
 
   onTouchEnd(event: TouchEvent, total: number): void {
+    if (this.zoomed()) {
+      return;
+    }
+
     const touchEndX = event.changedTouches[0]?.clientX ?? this.touchStartX;
     const delta = touchEndX - this.touchStartX;
 
@@ -165,6 +202,11 @@ export class ShowcaseComponent {
   @HostListener('window:resize')
   onWindowResize(): void {
     this.desktopViewport.set(window.innerWidth >= 1024);
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    this.exitZoom();
   }
 
   initialsFor(name: string): string {

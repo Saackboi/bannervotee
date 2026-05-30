@@ -1,10 +1,14 @@
-<main class="showcase-shell">
+<main class="showcase-shell" [class.is-zooming]="zoomed()">
   <nav class="topbar">
     <div class="flex items-center gap-3">
       <img class="nav-logo" src="/logos/logo_utp.png" alt="UTP Coclé" />
     </div>
     <span class="profile-orb" aria-hidden="true"></span>
   </nav>
+
+  @if (zoomed()) {
+    <button class="zoom-backdrop" type="button" aria-label="Cerrar vista ampliada" (click)="exitZoom()"></button>
+  }
 
   <section class="showcase-content mx-auto flex min-h-[calc(100dvh-3.55rem)] w-full max-w-5xl flex-col pb-6">
     <header class="hero-copy">
@@ -30,7 +34,7 @@
             }
 
             <section class="carousel-stage" aria-label="Carrusel de diseños" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event, banners.length)">
-              @if (banners.length > 1) {
+              @if (banners.length > 1 && !zoomed()) {
                 <button class="carousel-control prev" type="button" aria-label="Diseno anterior" (click)="previous(banners.length)">
                   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6" /></svg>
                 </button>
@@ -43,14 +47,19 @@
                 <article
                   class="coverflow-card"
                   [class.is-active]="index === activeIndex()"
+                  [class.is-zoomed]="index === activeIndex() && zoomed()"
                   [style.--offset]="offsetFor(index)"
-                  [style.z-index]="100 - (offsetFor(index) < 0 ? -offsetFor(index) : offsetFor(index))"
-                  (click)="setActiveIndex(index)"
+                  [style.z-index]="index === activeIndex() && zoomed() ? 220 : 100 - (offsetFor(index) < 0 ? -offsetFor(index) : offsetFor(index))"
+                  (click)="onCardClick(index)"
                 >
                     <div class="flyer-card">
+                    @if (index === activeIndex() && zoomed()) {
+                      <button class="zoom-close" type="button" aria-label="Cerrar vista ampliada" (click)="$event.stopPropagation(); exitZoom()">×</button>
+                    }
+
                     <div
                       class="flyer-image-frame showcase-card"
-                      [appVanillaTiltActive]="index === activeIndex()"
+                      [appVanillaTiltActive]="index === activeIndex() && !zoomed()"
                       (touchstart)="$event.stopPropagation()"
                       (touchend)="$event.stopPropagation()"
                     >

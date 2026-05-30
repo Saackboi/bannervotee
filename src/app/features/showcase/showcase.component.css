@@ -15,6 +15,17 @@
   overflow: hidden;
 }
 
+.zoom-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  border: 0;
+  background: rgba(2, 12, 24, 0.5);
+  backdrop-filter: blur(10px);
+  cursor: zoom-out;
+  animation: zoom-backdrop-in 220ms ease-out;
+}
+
 .showcase-content {
   height: calc(100svh - var(--topbar-height));
   min-height: 0;
@@ -56,6 +67,13 @@
   border-bottom: 1px solid rgba(0, 43, 85, 0.08);
   box-shadow: 0 16px 40px rgba(0, 43, 85, 0.08);
   backdrop-filter: blur(18px);
+}
+
+.showcase-shell.is-zooming .topbar,
+.showcase-shell.is-zooming .hero-copy,
+.showcase-shell.is-zooming > .showcase-content > p {
+  opacity: 0.22;
+  transition: opacity 220ms ease;
 }
 
 .nav-logo {
@@ -238,6 +256,20 @@
   filter: none;
 }
 
+.showcase-shell.is-zooming .coverflow-card:not(.is-zoomed) {
+  opacity: 0.08;
+  pointer-events: none;
+  filter: blur(2px) saturate(0.65);
+}
+
+.coverflow-card.is-active.is-zoomed {
+  z-index: 220;
+  cursor: zoom-out;
+  opacity: 1;
+  filter: none;
+  transform: translateX(-50%) translateY(clamp(-2.2rem, -5svh, -0.6rem)) scale(1.16);
+}
+
 .coverflow-card:not(.is-active) {
   cursor: pointer;
 }
@@ -251,6 +283,26 @@
   box-shadow: none;
   perspective: 1200px;
   transform-style: preserve-3d;
+}
+
+.zoom-close {
+  position: absolute;
+  top: -0.95rem;
+  right: -0.8rem;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(0, 43, 85, 0.88);
+  color: #ffffff;
+  box-shadow: 0 1rem 2rem rgba(2, 12, 24, 0.28);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .coverflow-card.is-active .flyer-card {
@@ -285,6 +337,16 @@
 
 .coverflow-card.is-active .flyer-image-frame {
   animation: active-card-float 4.4s ease-in-out infinite;
+}
+
+.coverflow-card.is-active.is-zoomed .flyer-image-frame {
+  animation: none;
+  box-shadow: 0 1.4rem 3.5rem rgba(2, 12, 24, 0.24);
+}
+
+.coverflow-card.is-active.is-zoomed .flyer-image-frame img {
+  height: clamp(20rem, 68svh, 42rem);
+  filter: drop-shadow(0 0.8rem 1rem rgba(2, 12, 24, 0.16));
 }
 
 .coverflow-card.is-active .flyer-image-frame.is-tilting {
@@ -594,6 +656,16 @@
   }
 }
 
+@keyframes zoom-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @media (min-width: 640px) {
   .coverflow-card {
     width: min(38vw, 22rem);
@@ -623,6 +695,14 @@
 
   .coverflow-card:not(.is-active) .flyer-meta {
     opacity: clamp(0.16, calc(1 - (var(--abs-offset) * 0.28)), 0.82);
+  }
+
+  .coverflow-card.is-active.is-zoomed {
+    transform: translateX(-50%) translateY(clamp(-2.8rem, -6svh, -1rem)) scale(1.45);
+  }
+
+  .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
+    height: clamp(24rem, 67svh, 45rem);
   }
 
   .carousel-control.prev {
@@ -665,6 +745,15 @@
     padding-top: 0.35rem;
   }
 
+  .coverflow-card.is-active.is-zoomed {
+    top: 0.5rem;
+    transform: translateX(-50%) scale(1.08);
+  }
+
+  .coverflow-card.is-active.is-zoomed .flyer-image-frame img {
+    height: clamp(17rem, 58svh, 30rem);
+  }
+
   .creator-pill {
     margin-top: 0.25rem;
     padding-block: 0.25rem;
@@ -681,6 +770,7 @@
   .coverflow-card.is-active,
   .flyer-image-frame img,
   .confirmation-toast,
+  .zoom-backdrop,
   .loading-mark,
   .vote-success-lottie,
   .vote-success-panel {
