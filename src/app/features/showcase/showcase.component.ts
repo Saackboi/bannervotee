@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, HostListener, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AnimationOptions, LottieComponent } from 'ngx-lottie';
 import { Banner } from '../../core/models/banner.model';
@@ -33,6 +33,7 @@ export class ShowcaseComponent {
   protected readonly loadingVote = signal(false);
   protected readonly message = signal('');
   protected readonly activeIndex = signal(0);
+  protected readonly desktopViewport = signal(typeof window !== 'undefined' && window.innerWidth >= 1024);
   protected readonly voteSuccessOptions: AnimationOptions = {
     path: '/assets/lottie/vote-success.json',
     loop: false,
@@ -157,7 +158,13 @@ export class ShowcaseComponent {
   }
 
   shouldLoadImage(index: number): boolean {
-    return Math.abs(this.offsetFor(index)) <= 1;
+    const visibleRange = this.desktopViewport() ? 3 : 1;
+    return Math.abs(this.offsetFor(index)) <= visibleRange;
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    this.desktopViewport.set(window.innerWidth >= 1024);
   }
 
   initialsFor(name: string): string {

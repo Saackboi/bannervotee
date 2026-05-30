@@ -613,11 +613,16 @@
 
   .coverflow-card {
     width: min(30vw, 27rem);
+    opacity: clamp(0.12, calc(1 - (var(--abs-offset) * 0.22)), 1);
     transform:
-      translateX(calc(-50% + (var(--offset) * 86%)))
-      translateZ(calc((1 - var(--abs-offset)) * 3.5rem))
-      rotateY(calc(var(--offset) * -15deg))
-      scale(clamp(0.78, calc(1 - (var(--abs-offset) * 0.1)), 1));
+      translateX(calc(-50% + (var(--offset) * 98%)))
+      translateZ(calc((1 - var(--abs-offset)) * 5.75rem))
+      rotateY(calc(var(--offset) * -17deg))
+      scale(clamp(0.42, calc(1 - (var(--abs-offset) * 0.15)), 1));
+  }
+
+  .coverflow-card:not(.is-active) .flyer-meta {
+    opacity: clamp(0.16, calc(1 - (var(--abs-offset) * 0.28)), 0.82);
   }
 
   .carousel-control.prev {
