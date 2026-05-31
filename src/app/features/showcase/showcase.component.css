@@ -705,6 +705,54 @@
   }
 }
 
+@media (min-width: 640px) and (max-width: 1023px) and (orientation: portrait) {
+  .showcase-content {
+    max-width: min(100vw, 56rem);
+    padding-inline: clamp(1rem, 4vw, 2rem);
+  }
+
+  .hero-copy {
+    padding-top: clamp(0.75rem, 1.7svh, 1.35rem);
+  }
+
+  .anniversary-logo {
+    max-width: min(20rem, 52vw);
+    max-height: clamp(3.2rem, 6svh, 4.25rem);
+  }
+
+  .carousel-stage {
+    margin-top: clamp(0.65rem, 1.7svh, 1.25rem);
+  }
+
+  .coverflow-card {
+    top: clamp(0.25rem, 1svh, 0.85rem);
+    width: min(66vw, 32rem);
+    transform:
+      translateX(calc(-50% + (var(--offset) * 72%)))
+      translateZ(calc((1 - var(--abs-offset)) * 3.75rem))
+      rotateY(calc(var(--offset) * -14deg))
+      scale(clamp(0.74, calc(1 - (var(--abs-offset) * 0.1)), 1));
+  }
+
+  .flyer-image-frame img {
+    height: clamp(25rem, 49svh, 36rem);
+  }
+
+  .flyer-title {
+    max-width: min(28rem, 72vw);
+    font-size: clamp(1rem, 2.4vw, 1.35rem);
+  }
+
+  .creator-pill {
+    margin-top: 0.45rem;
+  }
+
+  .vote-button {
+    max-width: min(28rem, 72vw);
+    margin-inline: auto;
+  }
+}
+
 @media (min-width: 1024px) {
   .showcase-content {
     max-width: min(96vw, 110rem);
