@@ -25,6 +25,7 @@ export class ShowcaseComponent {
   private readonly route = inject(ActivatedRoute);
   private currentUserId = '';
   private readonly banners = signal<Banner[]>([]);
+  private shuffledOnce = false;
 
   protected readonly settings$ = inject(SettingsService).settings$;
   protected readonly banners$ = inject(BannerService).activeBanners$;
@@ -54,7 +55,16 @@ export class ShowcaseComponent {
     });
 
     this.banners$.subscribe((list) => {
-      this.banners.set(list);
+      let ordered = list;
+      if (!this.shuffledOnce) {
+        ordered = [...list];
+        for (let i = ordered.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [ordered[i], ordered[j]] = [ordered[j], ordered[i]];
+        }
+        this.shuffledOnce = true;
+      }
+      this.banners.set(ordered);
       this.sessionReady.then(() => this.resolveInitialFocus(list));
     });
 
