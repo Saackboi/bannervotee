@@ -13,15 +13,22 @@ A web platform to showcase banner designs and let visitors vote for their favori
 
 ## Technologies
 
-Built with Angular, Firebase (Authentication, Firestore, Hosting), and Tailwind CSS.
+Angular, Firebase (Authentication, Firestore, Hosting), Tailwind CSS.
+
+### Notable libraries
+
+- **VanillaTilt** – 3D tilt effect on the active banner card.
+- **ngx-lottie** – Lottie animations for vote success feedback.
+- **canvas-confetti** – Confetti burst when a vote is cast.
 
 ## Local setup
 
 1. Clone the repository.
 2. Run `npm install`.
-3. Configure your Firebase project credentials in `src/environments/environment.ts` (use `environment.example.ts` as reference).
+3. Copy `src/environments/environment.example.ts` to `src/environments/environment.ts` and fill in your Firebase project credentials.
 4. Run `npm run build` to generate the production bundle.
-5. Deploy with `firebase deploy --only hosting`.
+5. Install the Firebase CLI globally if you haven't: `npm install -g firebase-tools`.
+6. Deploy with `firebase deploy --only hosting`.
 
 ## License
 
