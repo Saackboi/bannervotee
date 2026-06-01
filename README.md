@@ -1,5 +1,7 @@
 # BannerVote
 
+<img src="public/reference.png" alt="BannerVote showcase screenshot" width="720">
+
 A web platform to showcase banner designs and let visitors vote for their favorites. Participants receive a unique QR link to their design, making it easy to share and promote their work.
 
 ## Features
