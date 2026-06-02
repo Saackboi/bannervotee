@@ -206,8 +206,7 @@ export class ShowcaseComponent {
   }
 
   shouldLoadImage(index: number): boolean {
-    const visibleRange = this.desktopViewport() ? 3 : 1;
-    return Math.abs(this.offsetFor(index)) <= visibleRange;
+    return Math.abs(this.offsetFor(index)) <= 1;
   }
 
   imageUrlFor(banner: Banner): string {
