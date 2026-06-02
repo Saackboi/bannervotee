@@ -67,7 +67,7 @@
                       @if (shouldLoadImage(index)) {
                         <img
                           class="flyer-image"
-                          [src]="banner.imageUrl"
+                          [src]="imageUrlFor(banner)"
                           [alt]="banner.title"
                           [attr.loading]="index === activeIndex() ? 'eager' : 'lazy'"
                           [attr.fetchpriority]="index === activeIndex() ? 'high' : 'low'"

@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { BannerService } from '../../core/services/banner.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { VoteService } from '../../core/services/vote.service';
+import { getOptimizedBannerAssetPath } from '../../shared/utils/banner-asset-path.utils';
 import { getCreatorInitials } from '../../shared/utils/creator.utils';
 import { VanillaTiltDirective } from '../../shared/vanilla-tilt.directive';
 
@@ -207,6 +208,10 @@ export class ShowcaseComponent {
   shouldLoadImage(index: number): boolean {
     const visibleRange = this.desktopViewport() ? 3 : 1;
     return Math.abs(this.offsetFor(index)) <= visibleRange;
+  }
+
+  imageUrlFor(banner: Banner): string {
+    return getOptimizedBannerAssetPath(banner.imageUrl);
   }
 
   @HostListener('window:resize')

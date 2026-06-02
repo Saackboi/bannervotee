@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { RankingService } from '../../core/services/ranking.service';
 import { VoteService } from '../../core/services/vote.service';
+import { Banner } from '../../core/models/banner.model';
+import { getOptimizedBannerAssetPath } from '../../shared/utils/banner-asset-path.utils';
 
 @Component({
   selector: 'app-ranking',
@@ -42,6 +44,10 @@ export class RankingComponent {
 
   async backToGallery(): Promise<void> {
     await this.router.navigateByUrl('/');
+  }
+
+  imageUrlFor(banner: Banner): string {
+    return getOptimizedBannerAssetPath(banner.imageUrl);
   }
 
   private async ensureVotedAccess(): Promise<void> {

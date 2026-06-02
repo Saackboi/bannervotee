@@ -9,7 +9,7 @@ import { BannerService } from '../../core/services/banner.service';
 import { RankingService } from '../../core/services/ranking.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { StatusLabelPipe } from '../../shared/pipes/status-label.pipe';
-import { getBannerAssetPath } from '../../shared/utils/banner-asset-path.utils';
+import { getBannerAssetPath, getOptimizedBannerAssetPath } from '../../shared/utils/banner-asset-path.utils';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -102,6 +102,10 @@ export class AdminDashboardComponent {
         this.copiedId.set(null);
       }
     }, 2500);
+  }
+
+  imageUrlFor(banner: Banner): string {
+    return getOptimizedBannerAssetPath(banner.imageUrl);
   }
 
   dismissQr(): void {
