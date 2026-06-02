@@ -53,6 +53,20 @@
         ]
       }
     ],
+    "redirects": [
+      { "source": "/banners/angel.png", "destination": "/banners/angel.webp", "type": 301 },
+      { "source": "/banners/angelo.png", "destination": "/banners/angelo.webp", "type": 301 },
+      { "source": "/banners/ariel.png", "destination": "/banners/ariel.webp", "type": 301 },
+      { "source": "/banners/daniel.png", "destination": "/banners/daniel.webp", "type": 301 },
+      { "source": "/banners/eduardo.png", "destination": "/banners/eduardo.webp", "type": 301 },
+      { "source": "/banners/elian.png", "destination": "/banners/elian.webp", "type": 301 },
+      { "source": "/banners/erick.png", "destination": "/banners/erick.webp", "type": 301 },
+      { "source": "/banners/joan.png", "destination": "/banners/joan.webp", "type": 301 },
+      { "source": "/banners/kevinm.png", "destination": "/banners/kevinm.webp", "type": 301 },
+      { "source": "/banners/kevins.png", "destination": "/banners/kevins.webp", "type": 301 },
+      { "source": "/banners/natalia.png", "destination": "/banners/natalia.webp", "type": 301 },
+      { "source": "/banners/wilmer.png", "destination": "/banners/wilmer.webp", "type": 301 }
+    ],
     "rewrites": [
       {
         "source": "**",
